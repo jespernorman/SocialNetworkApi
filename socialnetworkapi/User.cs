@@ -62,5 +62,9 @@ namespace SocialNetworkApi
             }
         }
 
+        public User GetUserByName(string userName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

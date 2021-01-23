@@ -19,7 +19,31 @@ namespace SocialNetworkApi
         {
 
         }
+
+        public List<Like> GetAllLikes(int postItemId)
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder();
+            connectionStringBuilder.DataSource = DBPath;
+
+            using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
+            {
+                connection.Open();
+                var listOfPosts = connection.Query<Like>("SELECT * FROM Like").AsList();
+                return listOfPosts;
+            }
+        }
+
+        public List<Like> GetLikesByUser(int postItemId, int userId)
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder();
+            connectionStringBuilder.DataSource = DBPath;
+
+            using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
+            {
+                connection.Open();
+                var listOfPosts = connection.Query<Like>("SELECT * FROM Like").AsList();
+                return listOfPosts;
+            }
+        }
     }
-
-
 }

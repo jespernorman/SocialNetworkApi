@@ -8,7 +8,6 @@ namespace SocialNetworkApi
 {
     public class PostRepository
     {
-        public List<PostItem> ListOfPosts = new List<PostItem>();
         private string DBPath { get; set; }
 
         public PostRepository(string dbPath)
@@ -21,13 +20,12 @@ namespace SocialNetworkApi
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
 
-            var postsLists = new List<PostItem>();
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                ListOfPosts = connection.Query<PostItem>("SELECT * FROM Post_Item").AsList();
+                var listOfPosts = connection.Query<PostItem>("SELECT * FROM PostItem").AsList();
+                return listOfPosts;
             }
-            return ListOfPosts;
         }
 
         public bool AddPost(User user, string itemMessage) 

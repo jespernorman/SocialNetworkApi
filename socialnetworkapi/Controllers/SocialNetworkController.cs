@@ -11,22 +11,27 @@ namespace SocialNetworkApi.Controllers
     [Route("api/[controller]")]
     public class SocialNetworkController : Controller
     {
+
+        private const string dbPath = "../../../Database/Forum.db";
+
         // GET: api/values
         [HttpGet("GetAllPosts")]
         public IEnumerable<PostItem> GetAllPostItems(string userName)
         {
-            var postitem = new PostItem(dbPath);
 
-            var listOfPosts = new List<PostItem>();
+            if (IsAuthenticatedUser(userName))
+            {
+                var postitem = new PostItem(dbPath);
+                var listOfPosts = postitem.GetAllPosts();
+                return listOfPosts;
+            }
 
-            new PostItem { Id = 1, CreateDate = DateTime.Now, ModifiedDate = DateTime.Now, UserId = 1, ItemMessage = "First text message" };
-        
-            return listOfPosts;
+            return null;
         }
 
         // GET api/values/5
-        [HttpGet("GetPostItemBYId{id}")]
-        public string GetPostItemById(int id)
+        [HttpGet("GetPostItemBYId{id}/{UserName}")]
+        public string GetPostItemById(int id, string userName)
         {
             return "value";
         }
@@ -62,6 +67,16 @@ namespace SocialNetworkApi.Controllers
         public string DeleteLike(int id, string userName)
         {
             return "value";
+        }
+
+        private bool IsAuthenticatedUser(string userName)
+        {
+            var user = new User(dbPath);
+
+            if (user.GetUserByName(userName) != null)
+                return true;
+
+            return false;
         }
     }
 }

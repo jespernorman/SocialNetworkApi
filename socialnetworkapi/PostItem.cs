@@ -12,9 +12,8 @@ namespace SocialNetworkApi
         public int PostItemId { get; set; }
         public int UserId { get; set; }
         public string ItemMessage { get; set; }
-        public int Id { get; internal set; }
 
-        public List<int> ListOfLikes = new List<int>();
+        public List<Like> ListOfLikes = new List<Like>();
 
 
         public PostRepository PostRepository { get; set; }
@@ -27,7 +26,15 @@ namespace SocialNetworkApi
 
         public List<PostItem> GetAllPosts()
         {
-            return PostRepository.LoadAllPosts();
+            var postItems = PostRepository.LoadAllPosts();
+
+            foreach (var postItem in postItems)
+            {
+                var like = new Like();
+                postItem.ListOfLikes = like.GetAllLikes(postItem.PostItemId);
+            }
+
+            return postItems;
         }
 
         public bool CreatePost(User user, string itemMessage)
@@ -46,16 +53,16 @@ namespace SocialNetworkApi
             return PostRepository.DeletePostItem(postItemId);
         }
 
-        public void LikePost(int postItemId)
+        public void LikePost(int postItemId, int userId)
         {
-            var likes = new Likes();
+            var likes = new Like();
             likes.AddLike(postItemId);
 
         }
 
         public bool DeleteLike()
         {
-
+            return true;
         }
 
     }
