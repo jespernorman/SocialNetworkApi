@@ -15,11 +15,6 @@ namespace SocialNetworkApi
             DBPath = dbPath;
         }
 
-        public void AddLike(int postItemId, int userId)
-        {
-
-        }
-
         public List<Like> GetAllLikes(int postItemId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -41,14 +36,15 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                var listOfLikes = connection.Query<Like>("SELECT * FROM Like").AsList();
+                var listOfLikes = connection.Query<Like>("SELECT * FROM Like").AsList();                //WHERE UserId = UserId"????
                 return listOfLikes;
             }
         }
-        public void AddLikeToPost(int postItemId, int userId)
+        public void AddLikeToPost(Like like)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
+            
 
             int insertedRow = 0;
 
@@ -59,13 +55,13 @@ namespace SocialNetworkApi
                 var query = "INSERT INTO Like(UserId, PostItemId) VALUES(@UserId, @PostItemId";
                 var dp = new DynamicParameters();
 
-                dp.Add("@UserId", userId);
-                dp.Add("@PostItemId", postItemId);
+                dp.Add("@UserId", like.UserId);
+                dp.Add("@PostItemId", like.PostItemId);
 
                 insertedRow = connection.Execute(query, dp);
             }
         }
-        public void RemoveLike(int postItemId, int userId)
+        public void RemoveLike(int likeId, int postItemId, int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -75,6 +71,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
+                delRows = connection.Execute(@"DELETE FROM LIKE WHERE LikeId = LikeId", new { LikeId = likeId });                       //Delete row?
                 delRows = connection.Execute(@"DELETE FROM LIKE WHERE PostItemId = PostItemId", new { PostItemId = postItemId });
                 delRows = connection.Execute(@"DELETE FROM LIKE WHERE UserId = UserId", new { UserId = userId });
             }

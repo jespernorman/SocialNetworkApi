@@ -5,21 +5,26 @@ namespace SocialNetworkApi
 {
     public class Like
     {
-        public int LikeCounter { get; set; }
+        public int LikeId { get; set; }
+        public int PostItemId { get; set; }
+        public int UserName { get; set; }
+        public int UserId { get; set; }
 
-        public List<int> ListOfLikes = new List<int>();
+        //public List<Like> ListOfLikes = new List<Like>();
 
         public Like()
         {
 
         }
 
-        public void AddLike(int postItemId, int userId, string dbPath)
+        public void AddLike(Like like, string dbPath)
         {
-            ListOfLikes.Add(postItemId);
+            var likeRepository = new LikeRepository(dbPath);
+            likeRepository.AddLikeToPost(like);
+            
         }
 
-        public void blBSLBSS ()
+        public void RemoveLike()
         {
 
         }

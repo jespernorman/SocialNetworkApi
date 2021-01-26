@@ -7,13 +7,11 @@ namespace SocialNetworkApi
 {
     public class PostItem
     {
-        public DateTime CreateDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
-        public bool Like { get; set; }                      //Ska väl inte vara datetime?
-        public DateTime LikedByUserId { get; set; }
         public int PostItemId { get; set; }
         public int UserId { get; set; }
         public string ItemMessage { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         public List<PostItem> listOfPosts = new List<PostItem>();  
         public List<Like> ListOfLikes = new List<Like>();
@@ -50,33 +48,34 @@ namespace SocialNetworkApi
         public bool UpdatePost(int postItemId, int userId, string itemMessage, string dbPath)
         {
             var postItem = new PostItem(dbPath);
+            postItem.GetPostByUser(postItemId, userId, dbPath);
 
-            if (postItem.GetPostByUser(postItemId, userId, dbPath) == true)
-            {
-                PostRepository.UpdatePostItem(postItemId, itemMessage);
-                return true;
-            }
-            else
+            PostRepository.UpdatePostItem(postItemId, itemMessage);
+            return true;
+        }
+
+        public void DeletePost(int postItemId, int userId, string dbPath)
+        {
+            var postItem = new PostItem(dbPath);
+            var postRepository = new PostRepository(dbPath);
+
+            postItem.GetPostByUser(postItemId, userId, dbPath);
+            postRepository.DeletePostItem(postItemId);
+        }
+
+        public bool LikePost(int postItemId, string userName, int userId, string dbPath)
+        {
+            var likeRepository = new LikeRepository(dbPath);
+            var like = new Like();
+
+            if (ListOfLikes.Any(x => x.UserId == userId && x.PostItemId == postItemId && like.LikeId == like.LikeId))               
             {
                 return false;
             }
-            
-        }
-
-        public bool DeletePost(int postItemId) // User?
-        {
-            return PostRepository.DeletePostItem(postItemId);
-        }
-
-        public bool LikePost(int postItemId, int userId)
-        {
-
-            if (postItemId == PostItemId && userId == UserId == Like == true)
-            {
-                return false;
-            }
             else
             {
+                ListOfLikes.Add(like);
+                like.AddLike(like, dbPath);
                 return true;
             }
 
@@ -98,10 +97,11 @@ namespace SocialNetworkApi
         public bool DeleteLike(int postItemId, int userId, string dbPath)
         {
             var likeRepository = new LikeRepository(dbPath);
+            var like = new Like();
 
-            if (postItemId == PostItemId && userId == UserId == Like == true)
+            if (ListOfLikes.Any(x => x.UserId == userId && x.PostItemId == postItemId && like.LikeId == like.LikeId))
             {
-                likeRepository.RemoveLike(postItemId, userId);
+                likeRepository.RemoveLike(postItemId, userId, like.LikeId);
                 return true;
             }
             else
@@ -110,18 +110,32 @@ namespace SocialNetworkApi
             }
         }
 
-        public bool GetPostByUser(int postItemId,int userId, string dbPath)
+        public User GetPostByUser(int postItemId,int userId, string dbPath)
         {
             var postItems = PostRepository.LoadAllPosts();
             var user = new User(dbPath);
 
             if (postItems.Any(x => x.UserId == userId && x.PostItemId == postItemId))
             {
-                return true;
+                return user;
             }
             else
             {
-                return false;
+                return null;
+            }
+        }
+
+        public PostItem GetPostById(PostItem postitem, string dbPath)
+        {
+            var postItem = new PostItem(dbPath);
+
+            if(listOfPosts.Contains(postItem))
+            {
+                return postItem;
+            }
+            else
+            {
+                return null;
             }
         }
     }

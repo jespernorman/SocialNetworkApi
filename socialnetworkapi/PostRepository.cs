@@ -39,7 +39,7 @@ namespace SocialNetworkApi
             {
                 connection.Open();
 
-                var query = "INSERT INTO Post_Item(User_Id, UserName, Item_Message, Create_date) VALUES(@User_Id, @UserName, @Item_Message @Create_Date";  //Vilken är in i databasen nu igen @ eller icke?
+                var query = "INSERT INTO Post_Item(UserId, UserName, ItemMessage, Createdate) VALUES(@UserId, @UserName, @ItemMessage @CreateDate";  //Vilken är in i databasen nu igen @ eller icke?
 
                 var dp = new DynamicParameters();
                 dp.Add("@User_Id", user.UserId);
@@ -62,13 +62,13 @@ namespace SocialNetworkApi
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
-
+            var modifiedDate = DateTime.Now;
             int updatedRows = 0;
 
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                updatedRows = connection.Execute("UPDATE Post_Item SET Item_Message = @Item_Message WHERE Post_Id = @postId", new { postItemId, itemMessage });
+                updatedRows = connection.Execute("UPDATE PostItem SET ItemMessage = @itemMessage, ModifiedDate = @modifiedDate WHERE PostItemId = @postItemId", new { postItemId, itemMessage, modifiedDate });
             }
 
             if (updatedRows > 0)
@@ -89,7 +89,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                delRows = connection.Execute(@"DELETE FROM Post WHERE Id = @Id", new { Id = postItemId });
+                delRows = connection.Execute(@"DELETE FROM PostItem WHERE PostItemId = @Id", new { Id = postItemId });
             }
 
             if (delRows > 0)

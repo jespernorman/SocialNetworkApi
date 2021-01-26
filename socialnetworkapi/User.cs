@@ -65,8 +65,9 @@ namespace SocialNetworkApi
         public User GetUserByName(string userName, string dbPath)
         {
             var user = new User(dbPath);
+            var userId = user.UserId;
 
-            if(UserList.Any(x => x.UserName == userName))
+            if(UserList.Any(x => x.UserName == userName && x.UserId == userId))
             {
                 return user;
             }

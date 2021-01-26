@@ -16,7 +16,7 @@ namespace SocialNetworkApi.Controllers
 
         // GET: api/values
         [HttpGet("GetAllPosts")]
-        public IEnumerable<PostItem> GetAllPostItems(string userName)
+        public IEnumerable<PostItem> GetAllPostItems(string userName, int userId)
         {
 
             if (IsAuthenticatedUser(userName))
@@ -30,10 +30,11 @@ namespace SocialNetworkApi.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("GetPostItemBYId{id}/{UserName}")]
-        public string GetPostItemById(int id, string userName)
+        [HttpGet("GetPostItemBYId{PostItemId}/{UserName}")]
+        public void GetPostItemById(int postItemId, string userName)
         {
-            return "value";
+            var postItem = new PostItem(dbPath);
+            postItem.GetPostById(postItem, dbPath);
         }
 
         // POST api/values
@@ -44,35 +45,25 @@ namespace SocialNetworkApi.Controllers
             user.GetUserByName(userName, dbPath);
 
             string itemMessage = "";
-            //Console.WriteLine("Skriv in vad du vill posta");
-            //string itemMessage = Console.ReadLine();
 
             var postItem = new PostItem(dbPath);
             postItem.CreatePost(user, itemMessage);
         }
 
         // PUT api/values/5
-        [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                //ska username ha stort u eller ej?     //Åter igen void eller vad?
+        [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                         //ska username ha stort u eller ej?     //Åter igen void eller vad?
         public void UpdatePostItem(PostItem post, string userName, int userId)
         {
             var postItem = new PostItem(dbPath);
 
-            //Console.WriteLine("Mata in post ID:t på posten du vill redigera");
-
             int postItemId = 0;
-
-            //string postItemIdText = Console.ReadLine();
-            //int postItemId = int.Parse(postItemIdText);
-
-            //Console.WriteLine("Skriv in det du vill skriva istället");
-            //var itemMessage = Console.ReadLine();
             var itemMessage = "";
 
             postItem.UpdatePost(postItemId, userId, itemMessage, dbPath);
         }
 
         // DELETE api/values/5
-        [HttpDelete("DeletePostItem{id}/{UserName}")]
+        [HttpDelete("DeletePostItem{PostItemId}/{UserName}")]
         public void DeletePostItem(int postItemId, int userId, string userName)
         {
             var user = new User(dbPath);
@@ -81,28 +72,29 @@ namespace SocialNetworkApi.Controllers
             var postItem = new PostItem(dbPath);
             postItem.GetPostByUser(postItemId, userId, dbPath);
 
-            postItem.DeletePost(postItemId);
+            postItem.DeletePost(userId, postItemId, dbPath);
 
         }
 
-        [HttpPost("LikePost{PostItem}/{UserName}")]
-        public void LikePost(int postItemId, int userId)       //PostItem?
+        [HttpPost("LikePost{PostItemId}/{UserName}")]
+        public void LikePost(int postItemId, string userName, int userId)       //PostItem?
         {
             var postItem = new PostItem(dbPath);
             var Like = new Like();
+            var user = new User(dbPath);
 
-            //Like.GetLikeOnPost(dbPath, userId, postitemId);
-
-            postItem.LikePost(postItemId, userId);
+            postItem.LikePost(postItemId,userName, userId, dbPath);
 
             var like = new Like();
-            like.AddLike(postItemId, userId, dbPath);
-
+            like.AddLike(like, dbPath);
         }
 
-        [HttpDelete("DeleteLike{id}/{UserName}")]
-        public void DeleteLike(int postItemId, int userId)
+        [HttpDelete("DeleteLike{PostItemId}/{UserName}")]
+        public void DeleteLike(int postItemId, string userName, int userId)
         {
+            var user = new User(dbPath);
+
+
             var postItem = new PostItem(dbPath);
             postItem.DeleteLike(postItemId, userId, dbPath);
         }

@@ -80,7 +80,7 @@ namespace SocialNetworkApi
                 dp.Add("@UserName", userName, DbType.AnsiString, ParameterDirection.Input, 255);
                 dp.Add("@PassWord", passWord);
                 dp.Add("@Email_Adress", emailAdress);
-                dp.Add("@Create_Date", DateTime.Now);
+                dp.Add("@CreateDate", DateTime.Now);
 
                 insertedRow = connection.Execute(query, dp);
 
@@ -105,7 +105,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                updatedRows = connection.Execute("UPDATE User SET UserName = @userName, passWord, emailAdress = @passWord WHERE User_Id = @userId", new { userName, passWord, emailAdress, userId });
+                updatedRows = connection.Execute("UPDATE User SET UserName = @userName, passWord, emailAdress = @passWord WHERE UserId = @userId", new { userName, passWord, emailAdress, userId });
             }
 
             if (updatedRows > 0)
@@ -124,7 +124,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                delRows = connection.Execute(@"DELETE FROM User WHERE User_Id = @Id", new { Id = userId });
+                delRows = connection.Execute(@"DELETE FROM User WHERE UserId = @Id", new { Id = userId });
             }
 
             if (delRows > 0)
