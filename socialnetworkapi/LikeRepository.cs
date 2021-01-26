@@ -15,7 +15,7 @@ namespace SocialNetworkApi
             DBPath = dbPath;
         }
 
-        public void AddLike()
+        public void AddLike(int postItemId, int userId)
         {
 
         }
@@ -41,7 +41,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                var listOfPosts = connection.Query<Like>("SELECT * FROM Like").AsList();
+                var listOflikes = connection.Query<Like>("SELECT * FROM Like").AsList();
                 return listOfPosts;
             }
         }

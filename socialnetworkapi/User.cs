@@ -62,9 +62,19 @@ namespace SocialNetworkApi
             }
         }
 
-        public User GetUserByName(string userName)
+        public User GetUserByName(string userName, string dbPath)
         {
-            throw new NotImplementedException();
+            var user = new User(dbPath);
+
+            if(UserList.Any(x => x.UserName == userName))
+            {
+                return user;
+            }
+            else
+            {
+                return null;
+            }
+           
         }
     }
 }
