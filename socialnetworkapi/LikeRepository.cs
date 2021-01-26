@@ -41,8 +41,42 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                var listOflikes = connection.Query<Like>("SELECT * FROM Like").AsList();
-                return listOfPosts;
+                var listOfLikes = connection.Query<Like>("SELECT * FROM Like").AsList();
+                return listOfLikes;
+            }
+        }
+        public void AddLikeToPost(int postItemId, int userId)
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder();
+            connectionStringBuilder.DataSource = DBPath;
+
+            int insertedRow = 0;
+
+            using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
+            {
+                connection.Open();
+
+                var query = "INSERT INTO Like(UserId, PostItemId) VALUES(@UserId, @PostItemId";
+                var dp = new DynamicParameters();
+
+                dp.Add("@UserId", userId);
+                dp.Add("@PostItemId", postItemId);
+
+                insertedRow = connection.Execute(query, dp);
+            }
+        }
+        public void RemoveLike(int postItemId, int userId)
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder();
+            connectionStringBuilder.DataSource = DBPath;
+
+            int delRows = 0;
+
+            using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
+            {
+                connection.Open();
+                delRows = connection.Execute(@"DELETE FROM LIKE WHERE PostItemId = PostItemId", new { PostItemId = postItemId });
+                delRows = connection.Execute(@"DELETE FROM LIKE WHERE UserId = UserId", new { UserId = userId });
             }
         }
     }

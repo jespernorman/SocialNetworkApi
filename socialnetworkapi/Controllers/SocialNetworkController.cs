@@ -53,7 +53,7 @@ namespace SocialNetworkApi.Controllers
 
         // PUT api/values/5
         [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                //ska username ha stort u eller ej?     //Åter igen void eller vad?
-        public void UpdatePostItem(PostItem post, string userName)
+        public void UpdatePostItem(PostItem post, string userName, int userId)
         {
             var postItem = new PostItem(dbPath);
 
@@ -68,7 +68,7 @@ namespace SocialNetworkApi.Controllers
             //var itemMessage = Console.ReadLine();
             var itemMessage = "";
 
-            postItem.UpdatePost(postItemId, itemMessage);
+            postItem.UpdatePost(postItemId, userId, itemMessage, dbPath);
         }
 
         // DELETE api/values/5
@@ -86,7 +86,7 @@ namespace SocialNetworkApi.Controllers
         }
 
         [HttpPost("LikePost{PostItem}/{UserName}")]
-        public string LikePost(int postItemId, int userId)       //PostItem?
+        public void LikePost(int postItemId, int userId)       //PostItem?
         {
             var postItem = new PostItem(dbPath);
             var Like = new Like();
@@ -96,14 +96,15 @@ namespace SocialNetworkApi.Controllers
             postItem.LikePost(postItemId, userId);
 
             var like = new Like();
-            like.AddLike(postItemId);
+            like.AddLike(postItemId, userId, dbPath);
 
         }
 
         [HttpDelete("DeleteLike{id}/{UserName}")]
-        public string DeleteLike(int id, string userName)
+        public void DeleteLike(int postItemId, int userId)
         {
-            return "value";
+            var postItem = new PostItem(dbPath);
+            postItem.DeleteLike(postItemId, userId, dbPath);
         }
 
         private bool IsAuthenticatedUser(string userName)

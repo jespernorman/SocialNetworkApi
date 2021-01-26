@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace SocialNetworkApi
@@ -46,13 +47,23 @@ namespace SocialNetworkApi
             return PostRepository.AddPost(user, itemMessage);
         }
 
-        public bool UpdatePost(int postItemId, string itemMessage)
+        public bool UpdatePost(int postItemId, int userId, string itemMessage, string dbPath)
         {
-            return PostRepository.UpdatePostItem(postItemId, itemMessage); 
+            var postItem = new PostItem(dbPath);
 
+            if (postItem.GetPostByUser(postItemId, userId, dbPath) == true)
+            {
+                PostRepository.UpdatePostItem(postItemId, itemMessage);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
-        public bool DeletePost(int postItemId) // USer?
+        public bool DeletePost(int postItemId) // User?
         {
             return PostRepository.DeletePostItem(postItemId);
         }
@@ -84,9 +95,19 @@ namespace SocialNetworkApi
             //likes.AddLike(postItemId);
         }
 
-        public bool DeleteLike()
+        public bool DeleteLike(int postItemId, int userId, string dbPath)
         {
-            return true;
+            var likeRepository = new LikeRepository(dbPath);
+
+            if (postItemId == PostItemId && userId == UserId == Like == true)
+            {
+                likeRepository.RemoveLike(postItemId, userId);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool GetPostByUser(int postItemId,int userId, string dbPath)
@@ -102,9 +123,6 @@ namespace SocialNetworkApi
             {
                 return false;
             }
-
-
         }
-
     }
 }
