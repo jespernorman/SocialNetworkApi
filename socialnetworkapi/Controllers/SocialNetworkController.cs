@@ -16,7 +16,8 @@ namespace SocialNetworkApi.Controllers
 
         }
 
-        private const string dbPath = "socialnetworkapi/Database/SocialNetwork.db";
+        //private const string dbPath = "/../../../Database/SocialNetwork.db";
+        private string dbPath = Environment.CurrentDirectory + "/databas/SocialNetwork.db";
 
         // GET: api/values
         [HttpGet("GetAllPosts")]
@@ -35,26 +36,29 @@ namespace SocialNetworkApi.Controllers
 
         // GET api/values/5
         [HttpGet("GetPostItemBYId{PostItemId}/{UserName}")]
-        public void GetPostItemById(int postItemId, string userName)
+        public PostItem GetPostItemById(int postItemId, string userName)
         {
             var postItem = new PostItem(dbPath);
             postItem.GetPostById(postItem, dbPath);
+            return postItem;
         }
 
         // POST api/values
         [HttpPost("CreatePostItem{PostItem}/{ItemMessage}/{UserName}")]
-        public void CreatePostItem(string itemMessage, string userName)          //void?
+        public PostItem CreatePostItem(PostItem postitem, string userName)          //void?
         {
             var user = new User(dbPath);
             var postItem = new PostItem(dbPath);
             user.GetUserByName(userName, dbPath);
 
-            postItem.CreatePost(user, itemMessage);
+            postItem.CreatePost(postItem);
+
+            return postItem;
         }
 
         // PUT api/values/5
-        [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                         //ska username ha stort u eller ej?     //Åter igen void eller vad?
-        public void UpdatePostItem(PostItem post, string userName, int userId)
+        [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                         
+        public PostItem UpdatePostItem(PostItem post, string userName, int userId)
         {
             var postItem = new PostItem(dbPath);
 
@@ -62,6 +66,8 @@ namespace SocialNetworkApi.Controllers
             var itemMessage = "";
 
             postItem.UpdatePost(postItemId, userId, itemMessage, dbPath);
+
+            return postItem;
         }
 
         // DELETE api/values/5
@@ -76,6 +82,7 @@ namespace SocialNetworkApi.Controllers
 
             postItem.DeletePost(userId, postItemId, dbPath);
 
+
         }
 
         [HttpPost("LikePost{PostItemId}/{UserName}")]
@@ -89,6 +96,7 @@ namespace SocialNetworkApi.Controllers
 
             var like = new Like();
             like.AddLike(like, dbPath);
+
         }
 
         [HttpDelete("DeleteLike{PostItemId}/{UserName}")]

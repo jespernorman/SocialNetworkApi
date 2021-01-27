@@ -28,7 +28,7 @@ namespace SocialNetworkApi
             }
         }
 
-        public bool AddPost(User user, string itemMessage) 
+        public PostItem AddPost(PostItem postItem) 
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -39,23 +39,26 @@ namespace SocialNetworkApi
             {
                 connection.Open();
 
-                var query = "INSERT INTO Post_Item(UserId, UserName, ItemMessage, Createdate) VALUES(@UserId, @UserName, @ItemMessage @CreateDate";  //Vilken är in i databasen nu igen @ eller icke?
+                var query = "INSERT INTO PostItem(UserId, UserName, ItemMessage, CreateDate) VALUES(@UserId, @UserName, @ItemMessage, @CreateDate)"; 
 
                 var dp = new DynamicParameters();
-                dp.Add("@User_Id", user.UserId);
-                dp.Add("@UserName", user.UserName, DbType.AnsiString, ParameterDirection.Input, 255);
-                dp.Add("@Item_Message", itemMessage, DbType.AnsiString, ParameterDirection.Input, 255);
-                dp.Add("@Create_Date", DateTime.Now);
+                dp.Add("@UserId", postItem.UserId);
+                dp.Add("@UserName", postItem.UserName, DbType.AnsiString, ParameterDirection.Input, 255);
+                dp.Add("@ItemMessage", postItem.ItemMessage, DbType.AnsiString, ParameterDirection.Input, 255);
+                dp.Add("@CreateDate", DateTime.Now);
                 
                 insertedRow = connection.Execute(query, dp);
             }
 
             if (insertedRow > 0)
             {
-                return true;
+                return postItem;
+            }
+            else
+            {
+                return null;
             }
 
-            return false;
         }
 
         public bool UpdatePostItem(int postItemId, string itemMessage)

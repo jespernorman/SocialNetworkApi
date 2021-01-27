@@ -8,7 +8,7 @@ namespace SocialNetworkApi
     public class PostItem
     {
         public int PostItemId { get; set; }
-        public int UserId { get; set; }
+        public User UserCreator { get; set; }
         public string ItemMessage { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
@@ -43,9 +43,9 @@ namespace SocialNetworkApi
             return postItems;
         }
 
-        public bool CreatePost(User user, string itemMessage)
+        public PostItem CreatePost(PostItem postItem)
         {
-            return PostRepository.AddPost(user, itemMessage);
+            return PostRepository.AddPost(postItem);
         }
 
         public bool UpdatePost(int postItemId, int userId, string itemMessage, string dbPath)

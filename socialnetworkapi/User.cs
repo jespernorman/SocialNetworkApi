@@ -21,8 +21,8 @@ namespace SocialNetworkApi
 
         public User(string dbPath)
         {
-            var userRepository = new UserRepository(dbPath);
-            //LoadAllUsers();
+            UserRepository = new UserRepository(dbPath);
+            LoadAllUsers();
         }
         public User()
         {
@@ -66,12 +66,12 @@ namespace SocialNetworkApi
             }
         }
 
-        public User GetUserByName(string userName, string dbPath)
+        public User GetUserByName(User user, string dbPath)
         {
-            var user = new User(dbPath);
+            var userName = user.UserName;
             var userId = user.UserId;
 
-            if(UserList.Any(x => x.UserName == userName && x.UserId == userId))
+            if (UserList.Any(x => x.UserName == userName && x.UserId == userId))
             {
                 return user;
             }

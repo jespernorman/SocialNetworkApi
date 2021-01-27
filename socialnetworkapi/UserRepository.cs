@@ -57,7 +57,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                user = connection.QueryFirst<User>("SELECT * FROM User WHERE userName=@UserName", new { UserName = userName });
+                user = connection.QueryFirst<User>("SELECT * FROM User WHERE UserName=@UserName", new { UserName = userName });
             }
 
             return user;
@@ -74,12 +74,12 @@ namespace SocialNetworkApi
             {
                 connection.Open();
 
-                var query = "INSERT INTO User(UserName, PassWord, EmailAdress, Create_Date) VALUES(@UserName, @PassWord, @Email_Adress, @Create_Date)"; //Vilken ska ha Email_Adress
+                var query = "INSERT INTO User(UserName, PassWord, EmailAdress, CreateDate) VALUES(@UserName, @PassWord, @EmailAdress, @CreateDate)"; //Vilken ska ha Email_Adress
 
                 var dp = new DynamicParameters();
                 dp.Add("@UserName", userName, DbType.AnsiString, ParameterDirection.Input, 255);
                 dp.Add("@PassWord", passWord);
-                dp.Add("@Email_Adress", emailAdress);
+                dp.Add("@EmailAdress", emailAdress);
                 dp.Add("@CreateDate", DateTime.Now);
 
                 insertedRow = connection.Execute(query, dp);
@@ -105,7 +105,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                updatedRows = connection.Execute("UPDATE User SET UserName = @userName, passWord, emailAdress = @passWord WHERE UserId = @userId", new { userName, passWord, emailAdress, userId });
+                updatedRows = connection.Execute("UPDATE User SET UserName = @userName, PassWord, EmailAdress = @PassWord WHERE UserId = @userId", new { userName, PassWord = passWord, EmailAdress = emailAdress, userId });
             }
 
             if (updatedRows > 0)
