@@ -8,22 +8,22 @@ namespace SocialNetworkApi
     public class User
     {
         /// <summary>
-        /// 
+        /// Id of the User
         /// </summary>
         public int UserId { get; set; }
 
         /// <summary>
-        /// 
+        /// UserName for the User
         /// </summary>
         public string UserName { get; set; }
 
         /// <summary>
-        /// 
+        /// EmailAdress of the User
         /// </summary>
         public string EmailAdress { get; set; }
 
         /// <summary>
-        /// 
+        /// Date and time when the User was added to the program
         /// </summary>
         public DateTime CreateDate { get; set; }
 
@@ -34,11 +34,7 @@ namespace SocialNetworkApi
         public List<User> UserList = new List<User>();
         [JsonIgnore]
         private UserRepository UserRepository { get; set; }
-
-                                                                                                //Användarnamn måste vara unika. Dem kan bara innehålla alfanumeriska karaktärer
-                                                                                                //Detaljerad email adressvalidering kommer läggas till senare.I denna första version skall
-                                                                                                //bara grundläggande validering användas välj en metod som inte är strikt vi vill inte                                                                                   //blockera potentiella användare
-
+                                                                            
         public User(string dbPath)
         {
             UserRepository = new UserRepository(dbPath);
@@ -50,7 +46,7 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Loads all Users
         /// </summary>
         public void LoadAllUsers()
         {
@@ -58,7 +54,7 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Create a new User
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="passWord"></param>
@@ -66,20 +62,16 @@ namespace SocialNetworkApi
         /// <returns></returns>
         public bool CreateUser(string userName, string passWord, string emailAdress)
         {
-            if (UserList.Any(x => x.UserName == UserName))
-            {
-                return false;
-            }
-            else
-            {
-                UserRepository.AddUser(userName, passWord, emailAdress);
-                LoadAllUsers();
-                return true;
-            }
+
+            UserRepository.AddUser(userName, passWord, emailAdress);
+
+            LoadAllUsers();
+            return true;
+            
         }
 
         /// <summary>
-        /// 
+        /// Login varification 
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="passWord"></param>
@@ -103,7 +95,7 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Find a User in the program by his/hers Username
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
@@ -114,13 +106,31 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Find a User in the program by his/hers UserId
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
         public User GetUserById(int userId)
         {
             return UserRepository.GetById(userId);
+        }
+
+        /// <summary>
+        /// Email varification
+        /// <summary>
+        /// <param name="emailAdress"></param>
+        /// <returns></returns>
+        public bool IsValidEmail(string emailAdress)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(emailAdress);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

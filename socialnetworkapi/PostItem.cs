@@ -79,18 +79,18 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Creates a post
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="itemMessage"></param>
         /// <returns></returns>
         public bool CreatePost(int userId, string itemMessage)
-        {
+        {           
             return PostRepository.AddPost(userId, itemMessage);
         }
 
         /// <summary>
-        /// 
+        /// Updates a existing post,(only update the post YOU made)
         /// </summary>
         /// <param name="postItemId"></param>
         /// <param name="userId"></param>
@@ -102,7 +102,7 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// Delete a post 
         /// </summary>
         /// <param name="postItemId"></param>
         /// <param name="userId"></param>
@@ -113,7 +113,7 @@ namespace SocialNetworkApi
         }
 
         /// <summary>
-        /// 
+        /// get a specifik post by its postitemmid
         /// </summary>
         /// <param name="postItemId"></param>
         /// <returns></returns>

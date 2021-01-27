@@ -15,6 +15,11 @@ namespace SocialNetworkApi
             DBPath = dbPath;
         }
 
+        /// <summary>
+        /// Returns all likes stores in database
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <returns></returns>
         public List<Like> GetAllLikes(int postItemId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -28,6 +33,12 @@ namespace SocialNetworkApi
             }
         }
 
+        /// <summary>
+        /// Gets likes a specifik user has made
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public List<Like> GetLikesByUser(int postItemId, int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -36,11 +47,16 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                var listOfLikes = connection.Query<Like>("SELECT * FROM Like").AsList();                //WHERE UserId = UserId"????
+                var listOfLikes = connection.Query<Like>("SELECT * FROM Like").AsList();           
                 return listOfLikes;
             }
         }
 
+        /// <summary>
+        /// Get likes on a specifik post
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <returns></returns>
         public List<Like> GetLikesByPostItemId(int postItemId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -53,6 +69,12 @@ namespace SocialNetworkApi
             }
         }
 
+        /// <summary>
+        /// Adds a like to a specifik post
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public bool AddLikeToPost(int postItemId, int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -81,6 +103,12 @@ namespace SocialNetworkApi
             return false;
         }
 
+        /// <summary>
+        /// Deletes a like
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public bool DeleteLike(int postItemId, int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();

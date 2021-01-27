@@ -40,7 +40,7 @@ namespace SocialNetworkApi.Controllers
 
         // GET api/values/5
         /// <summary>
-        /// Returns the a PostItem object matching postItemId
+        /// Returns the PostItem object matching postItemId
         /// </summary>
         /// <param name="postItemId"></param>
         /// <param name="userName"></param>
@@ -66,17 +66,30 @@ namespace SocialNetworkApi.Controllers
         [HttpPost("CreatePostItem{itemMessage}/{userName}")]
         public ActionResult CreatePostItem(string itemMessage, string userName)
         {
-
             if (IsAuthenticatedUser(userName))
             {
                 var postItem = new PostItem(dbPath);
                 var user = new User(dbPath);
                 var currentUser = user.GetUserByName(userName);
-                if (postItem.CreatePost(currentUser.UserId, itemMessage))
+                var minCharacters = 5;
+                var maxCharacters = 400;
+
+                if (itemMessage.Length < minCharacters)
                 {
-                    return Ok();
+                    return BadRequest("Message was to short");
                 }
-                return BadRequest("Could not add item!");
+                if (itemMessage.Length > maxCharacters)
+                {
+                    return BadRequest("Message was too long");
+                }
+                else
+                {
+                    if (postItem.CreatePost(currentUser.UserId, itemMessage))
+                    {
+                        return Ok();
+                    }
+                    return BadRequest("Could not add item!");
+                }
             }
 
             return Unauthorized();
@@ -186,6 +199,37 @@ namespace SocialNetworkApi.Controllers
             }
 
             return Unauthorized();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <param name="emailAdress"></param>
+        /// <returns></returns>
+        [HttpPost("CreateUser{userName}/{passWord}/{emailAdress}")]
+        public ActionResult CreateUser(string userName, string passWord, string emailAdress)
+        {
+            var user = new User(dbPath);
+
+            if (user.UserList.Any(x => x.UserName == userName))
+            {
+                return BadRequest("Username is already taken");
+            }
+            else
+            {
+                if(user.IsValidEmail(emailAdress) != true)
+                {
+                    return BadRequest("Emailadress was not valid.");
+                }
+                else
+                {
+                    user.CreateUser(userName, passWord, emailAdress);
+                }
+
+                return Ok();
+            }
         }
 
         /// <summary>

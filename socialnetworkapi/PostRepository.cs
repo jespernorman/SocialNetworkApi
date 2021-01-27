@@ -15,6 +15,9 @@ namespace SocialNetworkApi
             DBPath = dbPath;
         }
 
+        /// <summary>
+        /// Loads all posts stores in database
+        /// <summary>
         public List<PostItem> LoadAllPosts()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -36,7 +39,12 @@ namespace SocialNetworkApi
                 return newListOfPost;
             }
         }
-
+        /// <summary>
+        /// Adds post in database
+        /// <summary>
+        /// <param name="userId"></param>
+        /// <param name="itemMessage"></param>
+        /// <returns></returns>
         public bool AddPost(int userId, string itemMessage) 
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -61,6 +69,12 @@ namespace SocialNetworkApi
             return false;
         }
 
+        /// <summary>
+        /// Updates a post the user has made
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <param name="itemMessage"></param>
+        /// <returns></returns>
         public PostItem UpdatePostItem(int postItemId, string itemMessage)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -82,6 +96,11 @@ namespace SocialNetworkApi
             return null;
         }
 
+        /// <summary>
+        /// deletes a post from datbase
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <returns></returns>
         public bool DeletePostItem(int postItemId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -103,6 +122,11 @@ namespace SocialNetworkApi
             return false;
         }
 
+        /// <summary>
+        /// returns a post by its postitemid
+        /// <summary>
+        /// <param name="postItemId"></param>
+        /// <returns></returns>
         public PostItem GetPostItemById(int postItemId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();

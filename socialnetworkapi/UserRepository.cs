@@ -15,6 +15,10 @@ namespace SocialNetworkApi
             DBPath = dbPath;
         }
 
+
+        /// <summary>
+        /// returns a list of all users in the program
+        /// <summary>
         public List<User> GetAll()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -31,6 +35,11 @@ namespace SocialNetworkApi
             return UserList;
         }
 
+        /// <summary>
+        /// Gets a User by UserId
+        /// <summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public User GetById(int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -47,6 +56,11 @@ namespace SocialNetworkApi
             return user;
         }
 
+        /// <summary>
+        /// Gets a User by UserName
+        /// <summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public User GetByUserName(string userName)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -61,6 +75,13 @@ namespace SocialNetworkApi
             }
         }
 
+        /// <summary>
+        /// Adds a User to the database
+        /// <summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <param name="emailAdress"></param>
+        /// <returns></returns>
         public bool AddUser(string userName, string passWord, string emailAdress)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -72,7 +93,7 @@ namespace SocialNetworkApi
             {
                 connection.Open();
 
-                var query = "INSERT INTO User(UserName, PassWord, EmailAdress, CreateDate) VALUES(@UserName, @PassWord, @EmailAdress, @CreateDate)"; //Vilken ska ha Email_Adress
+                var query = "INSERT INTO User(UserName, PassWord, EmailAdress, CreateDate) VALUES(@UserName, @PassWord, @EmailAdress, @CreateDate)"; 
 
                 var dp = new DynamicParameters();
                 dp.Add("@UserName", userName, DbType.AnsiString, ParameterDirection.Input, 255);
@@ -93,6 +114,14 @@ namespace SocialNetworkApi
 
         }
 
+        /// <summary>
+        /// Updates a users information in database
+        /// <summary>
+        /// <param name="userId"></param>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <param name="emailAdress"></param>
+        /// <returns></returns>
         public bool UpdateUser(int userId, string userName, string passWord, string emailAdress)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
@@ -112,6 +141,11 @@ namespace SocialNetworkApi
             return false;
         }
 
+        /// <summary>
+        /// Deletes a users from the database
+        /// <summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public bool DeleteUser(int userId)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
