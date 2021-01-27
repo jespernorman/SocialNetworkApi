@@ -24,6 +24,10 @@ namespace SocialNetworkApi
             var userRepository = new UserRepository(dbPath);
             //LoadAllUsers();
         }
+        public User()
+        {
+
+        }
 
         public void LoadAllUsers()
         {

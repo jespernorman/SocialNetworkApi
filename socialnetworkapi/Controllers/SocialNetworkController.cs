@@ -11,8 +11,12 @@ namespace SocialNetworkApi.Controllers
     [Route("api/[controller]")]
     public class SocialNetworkController : Controller
     {
+        public SocialNetworkController()
+        {
 
-        private const string dbPath = "../../../Database/SocialNetwork.db";
+        }
+
+        private const string dbPath = "socialnetworkapi/Database/SocialNetwork.db";
 
         // GET: api/values
         [HttpGet("GetAllPosts")]
@@ -38,15 +42,13 @@ namespace SocialNetworkApi.Controllers
         }
 
         // POST api/values
-        [HttpPost("CreatePostItem{PostItem}/{UserName}")]
-        public void CreatePostItem(PostItem post, string userName)          //void?
+        [HttpPost("CreatePostItem{PostItem}/{ItemMessage}/{UserName}")]
+        public void CreatePostItem(string itemMessage, string userName)          //void?
         {
             var user = new User(dbPath);
+            var postItem = new PostItem(dbPath);
             user.GetUserByName(userName, dbPath);
 
-            string itemMessage = "";
-
-            var postItem = new PostItem(dbPath);
             postItem.CreatePost(user, itemMessage);
         }
 

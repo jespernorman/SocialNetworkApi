@@ -19,10 +19,13 @@ namespace SocialNetworkApi
 
         public PostRepository PostRepository { get; set; }
 
-
         public PostItem(string dbPath)
         {
             PostRepository = new PostRepository(dbPath);
+        }
+        public PostItem()
+        {
+            
         }
 
         public List<PostItem> GetAllPosts(string dbPath)

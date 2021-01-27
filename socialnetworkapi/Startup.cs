@@ -20,6 +20,10 @@ namespace SocialNetworkApi
         {
             Configuration = configuration;
         }
+        public Startup()
+        {
+
+        }
 
         public IConfiguration Configuration { get; }
 
