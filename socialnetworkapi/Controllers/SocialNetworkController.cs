@@ -21,7 +21,7 @@ namespace SocialNetworkApi.Controllers
 
         // GET: api/values
         [HttpGet("GetAllPosts")]
-        public IEnumerable<PostItem> GetAllPostItems(string userName, int userId)
+        public ActionResult<IEnumerable<PostItem>> GetAllPostItems(string userName)
         {
 
             if (IsAuthenticatedUser(userName))
@@ -31,89 +31,128 @@ namespace SocialNetworkApi.Controllers
                 return listOfPosts;
             }
 
-            return null;
+            return Unauthorized();
         }
 
         // GET api/values/5
-        [HttpGet("GetPostItemBYId{PostItemId}/{UserName}")]
-        public PostItem GetPostItemById(int postItemId, string userName)
+        [HttpGet("GetPostItemById{PostItemId}/{UserName}")]
+        public ActionResult<PostItem> GetPostItemById(int postItemId, string userName)
         {
-            var postItem = new PostItem(dbPath);
-            postItem.GetPostById(postItem, dbPath);
-            return postItem;
+            if (IsAuthenticatedUser(userName))
+            {
+                var postItem = new PostItem(dbPath);
+                return postItem.GetPostById(postItemId);
+            }
+            return Unauthorized();
         }
 
         // POST api/values
-        [HttpPost("CreatePostItem{PostItem}/{ItemMessage}/{UserName}")]
-        public PostItem CreatePostItem(PostItem postitem, string userName)          //void?
+        [HttpPost("CreatePostItem{itemMessage}/{userName}")]
+        public ActionResult CreatePostItem(string itemMessage, string userName)
         {
-            var user = new User(dbPath);
-            var postItem = new PostItem(dbPath);
-            user.GetUserByName(userName, dbPath);
 
-            postItem.CreatePost(postItem);
+            if (IsAuthenticatedUser(userName))
+            {
+                var postItem = new PostItem(dbPath);
+                var user = new User(dbPath);
+                var currentUser = user.GetUserByName(userName);
+                if (postItem.CreatePost(currentUser.UserId, itemMessage))
+                {
+                    return Ok();
+                }
+                return BadRequest("Could not add item!");
+            }
 
-            return postItem;
+            return Unauthorized();
         }
 
         // PUT api/values/5
-        [HttpPut("UpdatePostItem{PostItem}/{UserName}")]                         
-        public PostItem UpdatePostItem(PostItem post, string userName, int userId)
+        [HttpPut("UpdatePostItem{inputPostitem}/{userName}")]                         
+        public ActionResult<PostItem> UpdatePostItem(PostItem inputPostitem, string userName)
         {
-            var postItem = new PostItem(dbPath);
 
-            int postItemId = 0;
-            var itemMessage = "";
+            if (IsAuthenticatedUser(userName))
+            {
+                var postItem = new PostItem(dbPath);
+                var user = new User(dbPath);
+                var currentUser = user.GetUserByName(userName);
+                return postItem.UpdatePost(inputPostitem.PostItemId, currentUser.UserId, inputPostitem.ItemMessage);
+            }
 
-            postItem.UpdatePost(postItemId, userId, itemMessage, dbPath);
+            return Unauthorized();
 
-            return postItem;
         }
 
         // DELETE api/values/5
-        [HttpDelete("DeletePostItem{PostItemId}/{UserName}")]
-        public void DeletePostItem(int postItemId, int userId, string userName)
+        [HttpDelete("DeletePostItem{postItemId}/{userName}")]
+        public ActionResult DeletePostItem(int postItemId, string userName)
         {
-            var user = new User(dbPath);
-            user.GetUserByName(userName, dbPath);
+            if(IsAuthenticatedUser(userName))
+            {
+                var user = new User(dbPath);
+                var currentUser = user.GetUserByName(userName);
 
-            var postItem = new PostItem(dbPath);
-            postItem.GetPostByUser(postItemId, userId, dbPath);
+                var postItem = new PostItem(dbPath);
 
-            postItem.DeletePost(userId, postItemId, dbPath);
+                if (postItem.DeletePost(currentUser.UserId, postItemId))
+                {
+                    return NoContent();
+                }
 
+                return BadRequest("Delete of postItemId:" + postItemId + " could not be performed!");               
+            }
+
+            return Unauthorized();
 
         }
 
-        [HttpPost("LikePost{PostItemId}/{UserName}")]
-        public void LikePost(int postItemId, string userName, int userId)       //PostItem?
+        [HttpPost("LikePost{postItemId}/{userName}")]
+        public ActionResult LikePost(int postItemId, string userName) 
         {
-            var postItem = new PostItem(dbPath);
-            var Like = new Like();
-            var user = new User(dbPath);
+            if (IsAuthenticatedUser(userName))
+            {
+                var user = new User(dbPath);
+                var currentUser = user.GetUserByName(userName);
 
-            postItem.LikePost(postItemId,userName, userId, dbPath);
+                var like = new Like(dbPath);
 
-            var like = new Like();
-            like.AddLike(like, dbPath);
+                if (like.AddLike(postItemId, currentUser.UserId))
+                {
+                    return Ok();
+                }
 
+                return BadRequest("Could not like postitem with id:" + postItemId);
+            }
+
+            return Unauthorized();
         }
 
-        [HttpDelete("DeleteLike{PostItemId}/{UserName}")]
-        public void DeleteLike(int postItemId, string userName, int userId)
+        [HttpDelete("DeleteLike{postItemId}/{userName}")]
+        public ActionResult DeleteLike(int postItemId, string userName)
         {
-            var user = new User(dbPath);
+            if (IsAuthenticatedUser(userName))
+            {
+                var user = new User(dbPath);
+                var currentUser = user.GetUserByName(userName);
 
+                var like = new Like(dbPath);
 
-            var postItem = new PostItem(dbPath);
-            postItem.DeleteLike(postItemId, userId, dbPath);
+                if (like.DeleteLike(postItemId, currentUser.UserId))
+                {
+                    return Ok();
+                }
+
+                return BadRequest("Could not delete like on postItemId:" + postItemId + " and user:" + currentUser.UserName);
+            }
+
+            return Unauthorized();
         }
 
         private bool IsAuthenticatedUser(string userName)
         {
             var user = new User(dbPath);
 
-            if (user.GetUserByName(userName, dbPath) != null)
+            if (user.GetUserByName(userName) != null)
                 return true;
 
             return false;

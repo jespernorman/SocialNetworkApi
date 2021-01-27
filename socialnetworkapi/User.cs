@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace SocialNetworkApi
 {
@@ -8,11 +9,15 @@ namespace SocialNetworkApi
     {
         public int UserId { get; set; }
         public string UserName { get; set; }
-        public string PassWord { get; set; }
         public string EmailAdress { get; set; }
         public DateTime CreateDate { get; set; }
 
+        [JsonIgnore]
+        public string PassWord { get; set; }
+
+        [JsonIgnore]
         public List<User> UserList = new List<User>();
+        [JsonIgnore]
         private UserRepository UserRepository { get; set; }
 
                                                                                                 //Användarnamn måste vara unika. Dem kan bara innehålla alfanumeriska karaktärer
@@ -66,20 +71,15 @@ namespace SocialNetworkApi
             }
         }
 
-        public User GetUserByName(User user, string dbPath)
+        public User GetUserByName(string userName)
         {
-            var userName = user.UserName;
-            var userId = user.UserId;
-
-            if (UserList.Any(x => x.UserName == userName && x.UserId == userId))
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }
+            return UserRepository.GetByUserName(userName);
            
+        }
+
+        public User GetUserById(int userId)
+        {
+            return UserRepository.GetById(userId);
         }
     }
 }

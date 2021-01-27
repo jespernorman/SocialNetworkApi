@@ -8,7 +8,7 @@ namespace SocialNetworkApi
 {
     public class PostRepository
     {
-        private string DBPath { get; set; }
+        public string DBPath { get; set; }
 
         public PostRepository(string dbPath)
         {
@@ -24,44 +24,44 @@ namespace SocialNetworkApi
             {
                 connection.Open();
                 var listOfPosts = connection.Query<PostItem>("SELECT * FROM PostItem").AsList();
-                return listOfPosts;
+
+                var newListOfPost = new List<PostItem>();
+
+                foreach(var postItem in listOfPosts)
+                {
+                    //Load full PostItem object
+                    newListOfPost.Add(GetPostItemById(postItem.PostItemId));
+                }
+
+                return newListOfPost;
             }
         }
 
-        public PostItem AddPost(PostItem postItem) 
+        public bool AddPost(int userId, string itemMessage) 
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
 
-            int insertedRow = 0;
+            int insertedRows = 0;
 
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
 
-                var query = "INSERT INTO PostItem(UserId, UserName, ItemMessage, CreateDate) VALUES(@UserId, @UserName, @ItemMessage, @CreateDate)"; 
+                insertedRows = connection.Execute("INSERT INTO PostItem (UserId, ItemMessage, CreateDate) VALUES (@UserId, @ItemMessage, @CreateDate)",
+                    new { UserId = userId, ItemMessage = itemMessage, CreateDate = DateTime.Now });
 
-                var dp = new DynamicParameters();
-                dp.Add("@UserId", postItem.UserId);
-                dp.Add("@UserName", postItem.UserName, DbType.AnsiString, ParameterDirection.Input, 255);
-                dp.Add("@ItemMessage", postItem.ItemMessage, DbType.AnsiString, ParameterDirection.Input, 255);
-                dp.Add("@CreateDate", DateTime.Now);
-                
-                insertedRow = connection.Execute(query, dp);
             }
 
-            if (insertedRow > 0)
+            if (insertedRows > 0)
             {
-                return postItem;
-            }
-            else
-            {
-                return null;
+                return true;
             }
 
+            return false;
         }
 
-        public bool UpdatePostItem(int postItemId, string itemMessage)
+        public PostItem UpdatePostItem(int postItemId, string itemMessage)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -76,10 +76,10 @@ namespace SocialNetworkApi
 
             if (updatedRows > 0)
             {
-                return true;
+                return GetPostItemById(postItemId);
             }
 
-            return false;
+            return null;
         }
 
         public bool DeletePostItem(int postItemId)
@@ -103,5 +103,27 @@ namespace SocialNetworkApi
             return false;
         }
 
+        public PostItem GetPostItemById(int postItemId)
+        {
+            var connectionStringBuilder = new SqliteConnectionStringBuilder();
+            connectionStringBuilder.DataSource = DBPath;
+
+            using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
+            {
+                connection.Open();
+                //Load the postItem
+                var postItem = connection.QueryFirst<PostItem>("SELECT * FROM PostItem WHERE PostItemId=@postItemId", new { postItemId });
+
+                //Get the user that created the post
+                var userRepository = new UserRepository(DBPath);
+                postItem.UserCreator = userRepository.GetById(postItem.UserId);
+
+                //Get likes
+                var like = new Like(DBPath);
+                postItem.ListOfLikes = like.GetLikesByPostId(postItem.PostItemId);
+
+                return postItem;
+            }
+        }
     }
 }

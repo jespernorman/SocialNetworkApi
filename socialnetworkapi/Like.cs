@@ -10,23 +10,33 @@ namespace SocialNetworkApi
         public int UserName { get; set; }
         public int UserId { get; set; }
 
-        //public List<Like> ListOfLikes = new List<Like>();
+        public LikeRepository LikeRepository { get; set; }
 
         public Like()
         {
 
         }
 
-        public void AddLike(Like like, string dbPath)
+        public Like(string dbPath)
         {
-            var likeRepository = new LikeRepository(dbPath);
-            likeRepository.AddLikeToPost(like);
+            LikeRepository = new LikeRepository(dbPath);
+        }
+
+        public bool AddLike(int postItemId,int userId)
+        {
+            return LikeRepository.AddLikeToPost(postItemId, userId);
             
         }
 
-        public void RemoveLike()
+        public bool DeleteLike(int postItemId, int userId)
         {
+            return LikeRepository.DeleteLike(postItemId, userId);
 
+        }
+
+        public List<Like> GetLikesByPostId(int postItemId)
+        {
+            return LikeRepository.GetLikesByPostItemId(postItemId);
         }
     }
 }

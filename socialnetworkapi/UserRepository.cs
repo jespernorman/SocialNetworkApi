@@ -41,13 +41,13 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                user = connection.QueryFirst<User>("SELECT * FROM User WHERE id=@id", new { id = userId });
+                user = connection.QueryFirst<User>("SELECT * FROM User WHERE UserId=@userId", new { userId });
             }
 
             return user;
         }
 
-        public User GetByUserName(int userName)
+        public User GetByUserName(string userName)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -57,10 +57,8 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                user = connection.QueryFirst<User>("SELECT * FROM User WHERE UserName=@UserName", new { UserName = userName });
+                return connection.QueryFirst<User>("SELECT * FROM User WHERE UserName=@UserName", new { UserName = userName });
             }
-
-            return user;
         }
 
         public bool AddUser(string userName, string passWord, string emailAdress)
