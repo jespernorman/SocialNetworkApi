@@ -16,10 +16,14 @@ namespace SocialNetworkApi.Controllers
 
         }
 
-        //private const string dbPath = "/../../../Database/SocialNetwork.db";
         private string dbPath = Environment.CurrentDirectory + "/databas/SocialNetwork.db";
 
         // GET: api/values
+        /// <summary>
+        /// Returns all PostItem objects
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpGet("GetAllPosts")]
         public ActionResult<IEnumerable<PostItem>> GetAllPostItems(string userName)
         {
@@ -35,6 +39,12 @@ namespace SocialNetworkApi.Controllers
         }
 
         // GET api/values/5
+        /// <summary>
+        /// Returns the a PostItem object matching postItemId
+        /// </summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpGet("GetPostItemById{PostItemId}/{UserName}")]
         public ActionResult<PostItem> GetPostItemById(int postItemId, string userName)
         {
@@ -47,6 +57,12 @@ namespace SocialNetworkApi.Controllers
         }
 
         // POST api/values
+        /// <summary>
+        /// Creates a PostItem
+        /// </summary>
+        /// <param name="itemMessage"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpPost("CreatePostItem{itemMessage}/{userName}")]
         public ActionResult CreatePostItem(string itemMessage, string userName)
         {
@@ -67,6 +83,12 @@ namespace SocialNetworkApi.Controllers
         }
 
         // PUT api/values/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputPostitem"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpPut("UpdatePostItem{inputPostitem}/{userName}")]                         
         public ActionResult<PostItem> UpdatePostItem(PostItem inputPostitem, string userName)
         {
@@ -84,6 +106,12 @@ namespace SocialNetworkApi.Controllers
         }
 
         // DELETE api/values/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpDelete("DeletePostItem{postItemId}/{userName}")]
         public ActionResult DeletePostItem(int postItemId, string userName)
         {
@@ -106,6 +134,12 @@ namespace SocialNetworkApi.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpPost("LikePost{postItemId}/{userName}")]
         public ActionResult LikePost(int postItemId, string userName) 
         {
@@ -127,6 +161,12 @@ namespace SocialNetworkApi.Controllers
             return Unauthorized();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="postItemId"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteLike{postItemId}/{userName}")]
         public ActionResult DeleteLike(int postItemId, string userName)
         {
@@ -148,6 +188,11 @@ namespace SocialNetworkApi.Controllers
             return Unauthorized();
         }
 
+        /// <summary>
+        /// Checks if the user exists
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         private bool IsAuthenticatedUser(string userName)
         {
             var user = new User(dbPath);

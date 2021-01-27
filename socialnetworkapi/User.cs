@@ -7,9 +7,24 @@ namespace SocialNetworkApi
 {
     public class User
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int UserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string UserName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string EmailAdress { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime CreateDate { get; set; }
 
         [JsonIgnore]
@@ -34,11 +49,21 @@ namespace SocialNetworkApi
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void LoadAllUsers()
         {
             UserList = UserRepository.GetAll();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <param name="emailAdress"></param>
+        /// <returns></returns>
         public bool CreateUser(string userName, string passWord, string emailAdress)
         {
             if (UserList.Any(x => x.UserName == UserName))
@@ -53,6 +78,12 @@ namespace SocialNetworkApi
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
         public bool Login(string userName, string passWord)
         {
 
@@ -71,12 +102,22 @@ namespace SocialNetworkApi
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public User GetUserByName(string userName)
         {
             return UserRepository.GetByUserName(userName);
            
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public User GetUserById(int userId)
         {
             return UserRepository.GetById(userId);
