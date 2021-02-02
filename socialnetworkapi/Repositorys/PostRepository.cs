@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using SocialNetworkApi.Models;
 
-namespace SocialNetworkApi
+namespace SocialNetworkApi.Repositorys
 {
     public class PostRepository
     {
@@ -18,7 +18,7 @@ namespace SocialNetworkApi
         /// <summary>
         /// Loads all posts stores in database
         /// <summary>
-        public List<PostItem> LoadAllPosts()
+        public List<PostItem> GetAllPosts()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -43,9 +43,9 @@ namespace SocialNetworkApi
         /// Adds post in database
         /// <summary>
         /// <param name="userId"></param>
-        /// <param name="itemMessage"></param>
+        /// <param name="post"></param>
         /// <returns></returns>
-        public bool AddPost(int userId, string itemMessage) 
+        public bool AddPost(int userId, PostItemRequest post) 
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -56,8 +56,8 @@ namespace SocialNetworkApi
             {
                 connection.Open();
 
-                insertedRows = connection.Execute("INSERT INTO PostItem (UserId, ItemMessage, CreateDate) VALUES (@UserId, @ItemMessage, @CreateDate)",
-                    new { UserId = userId, ItemMessage = itemMessage, CreateDate = DateTime.Now });
+                insertedRows = connection.Execute("INSERT INTO PostItem (UserId, ItemMessage, CreateDate, ModifiedDate) VALUES (@UserId, @ItemMessage, @CreateDate, @ModifiedDate)",
+                    new { UserId = userId, ItemMessage = post.ItemMessage, CreateDate = DateTime.Now, ModifiedDate = DateTime.Now });
 
             }
 
@@ -71,11 +71,10 @@ namespace SocialNetworkApi
 
         /// <summary>
         /// Updates a post the user has made
-        /// <summary>
-        /// <param name="postItemId"></param>
-        /// <param name="itemMessage"></param>
+        /// </summary>
+        /// <param name="post"></param>
         /// <returns></returns>
-        public PostItem UpdatePostItem(int postItemId, string itemMessage)
+        public PostItem UpdatePostItem(int id, PostItemRequest post)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -85,12 +84,12 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                updatedRows = connection.Execute("UPDATE PostItem SET ItemMessage = @itemMessage, ModifiedDate = @modifiedDate WHERE PostItemId = @postItemId", new { postItemId, itemMessage, modifiedDate });
+                updatedRows = connection.Execute("UPDATE PostItem SET ItemMessage = @itemMessage, ModifiedDate = @modifiedDate WHERE PostItemId = @postItemId", new { postItemId = id, itemMessage = post.ItemMessage, modifiedDate });
             }
 
             if (updatedRows > 0)
             {
-                return GetPostItemById(postItemId);
+                return GetPostItemById(id);
             }
 
             return null;

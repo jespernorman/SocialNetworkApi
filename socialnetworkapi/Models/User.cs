@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using SocialNetworkApi.Repositorys;
 
-namespace SocialNetworkApi
+namespace SocialNetworkApi.Models
 {
     public class User
     {

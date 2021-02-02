@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using SocialNetworkApi.Models;
 
-namespace SocialNetworkApi
+namespace SocialNetworkApi.Repositorys
 {
     public class UserRepository
     {
@@ -71,7 +72,7 @@ namespace SocialNetworkApi
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                return connection.QueryFirst<User>("SELECT * FROM User WHERE UserName=@UserName", new { UserName = userName });
+                return connection.QueryFirstOrDefault<User>("SELECT * FROM User WHERE UserName=@UserName", new { UserName = userName });
             }
         }
 

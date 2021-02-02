@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using SocialNetworkApi.Repositorys;
 
-namespace SocialNetworkApi
+namespace SocialNetworkApi.Models
 {
     public class Like
     {

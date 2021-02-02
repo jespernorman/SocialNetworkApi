@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using SocialNetworkApi.Models;
 
-namespace SocialNetworkApi
+namespace SocialNetworkApi.Repositorys
 {
     public class LikeRepository
     {
