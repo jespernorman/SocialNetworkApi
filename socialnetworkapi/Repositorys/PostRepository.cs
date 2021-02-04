@@ -142,8 +142,8 @@ namespace SocialNetworkApi.Repositorys
                 postItem.UserCreator = userRepository.GetById(postItem.UserId);
 
                 //Get likes
-                var like = new Like(DBPath);
-                postItem.ListOfLikes = like.GetLikesByPostId(postItem.PostItemId);
+                var likeRepository = new LikeRepository(DBPath);
+                postItem.ListOfLikes = likeRepository.GetLikesByPostItemId(postItemId);
 
                 return postItem;
             }

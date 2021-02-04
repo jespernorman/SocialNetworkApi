@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SocialNetworkApi.Models;
+using SocialNetworkApi.Repositorys;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,35 +15,42 @@ namespace SocialNetworkApi.Controllers
     {
         private readonly string dbPath = Environment.CurrentDirectory + "/databas/SocialNetwork.db";
 
+         /// <summary>
+        /// Injecting repositories
+        /// </summary>
+        private readonly UserRepository userRepository;
+
+        public UsersController()
+        {
+            userRepository = new UserRepository(dbPath);
+        }
+
         /// <summary>
-        /// 
+        /// Adds a user to the system
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="passWord"></param>
         /// <param name="emailAdress"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CreateUser(string userName, string passWord, string emailAdress)
+        public ActionResult CreateUser(UserRequest userRequest)
         {
-            var user = new User(dbPath);
-
-            if (user.UserList.Any(x => x.UserName == userName))
+            if (userRepository.GetByUserName(userRequest.UserName) == null)
             {
-                return BadRequest("Username is already taken");
-            }
-            else
-            {
-                if (user.IsValidEmail(emailAdress) != true)
+                var user = new User();
+                if (user.IsValidEmail(userRequest.EmailAdress))
                 {
-                    return BadRequest("Emailadress was not valid.");
-                }
-                else
-                {
-                    user.CreateUser(userName, passWord, emailAdress);
+                    if (userRepository.CreateUser(userRequest))
+                    {
+                        return Ok();
+                    }
+                    return BadRequest("User could not be added.");
                 }
 
-                return Ok();
+                return BadRequest("Invalid emailadress!");
             }
+            
+            return BadRequest("User already exists.");          
         }
     }
 }

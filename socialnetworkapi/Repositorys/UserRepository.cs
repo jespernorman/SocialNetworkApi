@@ -46,15 +46,11 @@ namespace SocialNetworkApi.Repositorys
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
 
-            var user = new User(DBPath);
-
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                user = connection.QueryFirst<User>("SELECT * FROM User WHERE UserId=@userId", new { userId });
+                return connection.QueryFirst<User>("SELECT * FROM User WHERE UserId=@userId", new { userId });
             }
-
-            return user;
         }
 
         /// <summary>
@@ -67,8 +63,6 @@ namespace SocialNetworkApi.Repositorys
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
 
-            var user = new User(DBPath);
-
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
@@ -78,12 +72,10 @@ namespace SocialNetworkApi.Repositorys
 
         /// <summary>
         /// Adds a User to the database
-        /// <summary>
-        /// <param name="userName"></param>
-        /// <param name="passWord"></param>
-        /// <param name="emailAdress"></param>
+        /// </summary>
+        /// <param name="currentUser"></param>
         /// <returns></returns>
-        public bool AddUser(string userName, string passWord, string emailAdress)
+        public bool CreateUser(UserRequest currentUser)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -97,9 +89,9 @@ namespace SocialNetworkApi.Repositorys
                 var query = "INSERT INTO User(UserName, PassWord, EmailAdress, CreateDate) VALUES(@UserName, @PassWord, @EmailAdress, @CreateDate)"; 
 
                 var dp = new DynamicParameters();
-                dp.Add("@UserName", userName, DbType.AnsiString, ParameterDirection.Input, 255);
-                dp.Add("@PassWord", passWord);
-                dp.Add("@EmailAdress", emailAdress);
+                dp.Add("@UserName", currentUser.UserName, DbType.AnsiString, ParameterDirection.Input, 255);
+                dp.Add("@PassWord", currentUser.PassWord);
+                dp.Add("@EmailAdress", currentUser.EmailAdress);
                 dp.Add("@CreateDate", DateTime.Now);
 
                 insertedRow = connection.Execute(query, dp);

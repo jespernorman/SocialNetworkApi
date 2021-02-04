@@ -73,10 +73,10 @@ namespace SocialNetworkApi.Repositorys
         /// <summary>
         /// Adds a like to a specifik post
         /// <summary>
-        /// <param name="postItemId"></param>
-        /// <param name="userId"></param>
+        /// <param name="currentPostItem"></param>
+        /// <param name="currentUser"></param>
         /// <returns></returns>
-        public bool AddLikeToPost(int postItemId, int userId)
+        public bool AddLikeToPost(PostItem currentPostItem, User currentUser)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -90,12 +90,11 @@ namespace SocialNetworkApi.Repositorys
                 var query = "INSERT INTO Like (UserId, PostItemId) VALUES(@UserId, @PostItemId)";
                 var dp = new DynamicParameters();
 
-                dp.Add("@UserId", userId);
-                dp.Add("@PostItemId", postItemId);
+                dp.Add("@UserId", currentUser.UserId);
+                dp.Add("@PostItemId", currentPostItem.PostItemId);
 
                 insertedRow = connection.Execute(query, dp);
             }
-
             if (insertedRow > 0)
             {
                 return true;
@@ -107,10 +106,10 @@ namespace SocialNetworkApi.Repositorys
         /// <summary>
         /// Deletes a like
         /// <summary>
-        /// <param name="postItemId"></param>
-        /// <param name="userId"></param>
+        /// <param name="currentPostItem"></param>
+        /// <param name="currentUser"></param>
         /// <returns></returns>
-        public bool DeleteLike(int postItemId, int userId)
+        public bool DeleteLike(PostItem currentPostItem, User currentUser)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.DataSource = DBPath;
@@ -120,7 +119,7 @@ namespace SocialNetworkApi.Repositorys
             using (var connection = new SqliteConnection(connectionStringBuilder.ConnectionString))
             {
                 connection.Open();
-                delRows = connection.Execute(@"DELETE FROM LIKE WHERE PostItemId=@postItemId and UserId=@userId", new { postItemId , userId });
+                delRows = connection.Execute(@"DELETE FROM LIKE WHERE PostItemId=@postItemId and UserId=@userId", new {postItemId = currentPostItem.PostItemId , userId = currentUser.UserId });
             }
 
             if (delRows > 0)

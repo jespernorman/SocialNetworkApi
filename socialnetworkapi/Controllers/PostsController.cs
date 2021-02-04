@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using SocialNetworkApi.Models;
 using SocialNetworkApi.Repositorys;
+using SocialNetworkApi.Shared;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -37,7 +38,7 @@ namespace SocialNetworkApi.Controllers
         public ActionResult<IEnumerable<PostItemResponse>> Get(string username)
         {
 
-            if (IsAuthenticatedUser(username))
+            if (Authenticate.IsAuthenticatedUser(userRepository, username))
             {
                 var postItems = postRepository.GetAllPosts();
                 var postItemResponses = new List<PostItemResponse>();
@@ -64,7 +65,7 @@ namespace SocialNetworkApi.Controllers
         [HttpGet("{id}/{username}")]
         public ActionResult<PostItemResponse> Get(int id, string username)
         {
-            if (IsAuthenticatedUser(username))
+            if (Authenticate.IsAuthenticatedUser(userRepository, username))
             {
                 var postItem = postRepository.GetPostItemById(id);
                 return GetPostItemResponse(postItem);
@@ -82,7 +83,7 @@ namespace SocialNetworkApi.Controllers
         [HttpPost("{username}")]
         public ActionResult CreatePost(PostItemRequest post, string username)
         {
-            if (IsAuthenticatedUser(username))
+            if (Authenticate.IsAuthenticatedUser(userRepository, username))
             {
                 var currentUser = userRepository.GetByUserName(username);
                 var minCharacters = 5;
@@ -119,7 +120,7 @@ namespace SocialNetworkApi.Controllers
         [HttpPut("{id}/{username}")]                         
         public ActionResult<PostItemResponse> UpdatePost(int id , string username, PostItemRequest post)
         {
-            if (IsAuthenticatedUser(username))
+            if (Authenticate.IsAuthenticatedUser(userRepository, username))
             {
                 var postItem = postRepository.UpdatePostItem(id, post);
                 return GetPostItemResponse(postItem);
@@ -138,11 +139,11 @@ namespace SocialNetworkApi.Controllers
         [HttpDelete("{id}/{username}")]
         public ActionResult Delete(int id, string username)
         {
-            if(IsAuthenticatedUser(username))
+            if(Authenticate.IsAuthenticatedUser(userRepository, username))
             {
                 if (postRepository.DeletePostItem(id))
                 {
-                    return NoContent();
+                    return Ok();
                 }
 
                 return BadRequest("Delete of postItemId:" + id + " could not be performed!");               
@@ -150,21 +151,6 @@ namespace SocialNetworkApi.Controllers
 
             return Unauthorized();
 
-        }
-
-        /// <summary>
-        /// Checks if the user exists
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        private bool IsAuthenticatedUser(string username)
-        {
-            var user = new User(dbPath);
-
-            if (user.GetUserByName(username) != null)
-                return true;
-
-            return false;
         }
 
         /// <summary>
